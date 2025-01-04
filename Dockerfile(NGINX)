@@ -1,0 +1,22 @@
+FROM nginx:1.25.2-alpine
+
+# Set working directory inside the container
+ARG NGINX_WORKDIR=/usr/share/nginx/html
+WORKDIR ${NGINX_WORKDIR}
+
+# Environment variables for configurations
+ARG DEFAULT_CONF_FILE=/etc/nginx/conf.d/default.conf
+ARG CUSTOM_CONF_FILE=custom.conf
+
+# Copy custom Nginx configuration (if applicable)
+COPY ${CUSTOM_CONF_FILE} ${DEFAULT_CONF_FILE}
+
+# Copy static files or website content
+COPY ./dist ${NGINX_WORKDIR}
+
+# Expose the default Nginx port
+ARG NGINX_PORT=80
+EXPOSE ${NGINX_PORT}
+
+# Command to run Nginx
+CMD ["nginx", "-g", "daemon off;"]
