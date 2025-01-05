@@ -1,0 +1,23 @@
+# Use an official Python base image for ARMv7
+FROM --platform=linux/arm/v7 python:3.11-slim
+
+# Set the working directory
+WORKDIR /usr/src/homeassistant
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y build-essential libffi-dev libssl-dev zlib1g-dev libjpeg-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the source code
+COPY . .
+
+# Expose Home Assistant's default port
+EXPOSE 8123
+
+# Command to run Home Assistant
+CMD ["python", "-m", "homeassistant", "--config", "/config"]
